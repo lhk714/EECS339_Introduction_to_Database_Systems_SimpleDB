@@ -1,0 +1,56 @@
+EECS 339 Introduction to Database System
+Laboratory 1 Write-up
+Haikun Liu (hlg483)
+
+
+This lab exercise took me about a week to finish with the helps of classmates, online resources and day-and-night programming. The API remains as the same, and additional classes are added. I follow the hints and suggestion provided to design the solutions. 
+
+
+Tuple.java
+
+There are 3 private variables (TupleDesc td, RecordId rid and Field[] fields) declared in the class. The iterator is created by wrapping fields into an ArrayList, such that we can obtain an iterator object by calling ArrayList.iterator().  
+
+
+TupleDesc.java
+
+There is a private variable (ArrayList<TDItem> tditems) created to wrap TDItem into an ArrayList for iteration propose, and for easily accessing when we want to obtain the name and type of a particular item using TDItem.getFieldType() and TDItem.getFieldName().
+
+
+Catalog.java
+
+There is a private class Table is created to store the relative information (name, Dbfile and primary key) in a systematic way. Two haspmaps (HashMap<String,Table> nameHash and HashMap<Integer,Table> idHash) are used. nameHash maps name with table and idHash maps id with table. That enables easy and fast retrieve a table if we know its name or id. 
+
+
+BufferPool.java
+
+There is hashmap HashMap<PageId, Page> myCache is deployed as a cache to store pages. We can easily access a page by using its pageid. 
+
+
+HeapFile.java
+
+There are 3 private variables (TupleDesc td, File f and ArrayList<Page> pages) is declared. The difficulty is the implementation of readPage(PageId pid) function. Luckily, RandomAccessFile is almost the same as other file access methods and easy to understand. However, the algorithms of calculating the offset are the data buffer size are difficult. After several attempts, RandomAccessFile.skipBytes() and RandomAccessFile.read() are used to complete the task. An additional HeapFileIterator.java was written as a help class for implementing the HeapFile iterator. 
+
+
+HeapPageId.java
+
+Function hashCode() generates a hashcode using the combination of table id and page number, which is used in function equals() to tell whether the two HeapPageId objects are equal or not. 
+
+
+RecordId.java
+
+The same idea as HeapPageId.java, mentioned above, is adopted in RecordId.java.
+
+
+HeapPage.java
+
+The difficulty in this class in the function isSlotUsed(int i) which involves bitwise manipulations to tell if the slot is empty. The iterator is created using an ArrayList<Tuple>, which wraps all of non-empty slots or tuples by deploying isSlotUsed(int i).
+
+
+SeqScan.java
+
+This class is implemented with the help of HeapFileIterator.java, which is used to generate iterators of DbFileIterator. 
+
+
+HeapFileIterator.java
+
+It is implemented as a help class to create iterators of DbFileIterator, because directly casting is failed. For the rewind propose of the iterator, we can adopt ListIterator<Tuple> which has function hasPrevious() and function previous(). For the rest parts of this class, they are designed to check validation of arguments, access the tuples, open and close the iterator. 
